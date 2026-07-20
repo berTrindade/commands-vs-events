@@ -6,30 +6,30 @@ Think of the broker as the postal service. It doesn't decide what kind of commun
 
 ## Case 1 — sending a command (orchestration)
 
-```
-Order Service
-      |
-      | "Charge this customer"
-      v
-Payment Queue
-      |
-      v
-Payment Service
+```mermaid
+C4Container
+    title Command (orchestration)
+    Container(order, "Order Service")
+    Container(queue, "Payment Queue", "Message broker")
+    Container(payment, "Payment Service")
+    Rel(order, queue, "Charge this customer")
+    Rel(queue, payment, "delivers the command")
 ```
 
 The Order Service is telling the Payment Service exactly what to do. That's a **command**.
 
 ## Case 2 — publishing an event (choreography)
 
-```
-Order Service
-      |
-      | "An order was created"
-      v
-    Broker
-   /       \
-Inventory   Email
-Service     Service
+```mermaid
+C4Container
+    title Event (choreography)
+    Container(order, "Order Service")
+    Container(broker, "Broker", "Message broker")
+    Container(inventory, "Inventory Service")
+    Container(email, "Email Service")
+    Rel(order, broker, "OrderCreated")
+    Rel(broker, inventory, "reacts")
+    Rel(broker, email, "reacts")
 ```
 
 The Order Service isn't asking anyone to do anything. It's announcing that something happened. Any service interested in that event can react. That's **choreography**.
@@ -38,8 +38,14 @@ The Order Service isn't asking anyone to do anything. It's announcing that somet
 
 Out of the box a broker only gives you this:
 
-```
-Producer ---> Broker ---> Consumer
+```mermaid
+C4Container
+    title The broker on its own
+    Container(producer, "Producer")
+    Container(broker, "Broker", "Message broker")
+    Container(consumer, "Consumer")
+    Rel(producer, broker, "publishes a message")
+    Rel(broker, consumer, "delivers the message")
 ```
 
 It has no idea whether the message means "charge the customer", "OrderCreated", or "hello world". That meaning is your application's decision, not the broker's. Swapping one broker for another doesn't change the pattern.
