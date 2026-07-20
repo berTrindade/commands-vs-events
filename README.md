@@ -1,6 +1,6 @@
 # Commands vs Events
 
-The confusion usually comes from mixing up the **message broker** (a tool) with the **architectural pattern** (how you use the tool). RabbitMQ, Kafka, SQS, NATS, they're all the same story here.
+The **message broker** (a tool) and the **architectural pattern** (how you use the tool) are two separate things. RabbitMQ, Kafka, SQS, NATS, they're all the same story here.
 
 Think of the broker as the postal service. It doesn't decide what kind of communication you're doing. It just moves messages.
 
