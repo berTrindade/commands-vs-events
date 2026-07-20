@@ -1,8 +1,8 @@
 # Commands vs Events
 
-The confusion usually comes from mixing up **RabbitMQ** (a tool) with **architectural patterns** (how you use the tool).
+The confusion usually comes from mixing up the **message broker** (a tool) with the **architectural pattern** (how you use the tool). RabbitMQ, Kafka, SQS, NATS, they're all the same story here.
 
-Think of RabbitMQ as the postal service. It doesn't decide what kind of communication you're doing. It just moves messages.
+Think of the broker as the postal service. It doesn't decide what kind of communication you're doing. It just moves messages.
 
 ## Case 1 — sending a command (orchestration)
 
@@ -26,7 +26,7 @@ Order Service
       |
       | "An order was created"
       v
-   RabbitMQ
+    Broker
    /       \
 Inventory   Email
 Service     Service
@@ -34,15 +34,15 @@ Service     Service
 
 The Order Service isn't asking anyone to do anything. It's announcing that something happened. Any service interested in that event can react. That's **choreography**.
 
-## If you install RabbitMQ today, you get neither
+## The broker itself gives you neither
 
-Out of the box RabbitMQ only gives you this:
+Out of the box a broker only gives you this:
 
 ```
-Producer ---> RabbitMQ ---> Consumer
+Producer ---> Broker ---> Consumer
 ```
 
-It has no idea whether the message means "charge the customer", "OrderCreated", or "hello world". That meaning is your application's decision, not the broker's.
+It has no idea whether the message means "charge the customer", "OrderCreated", or "hello world". That meaning is your application's decision, not the broker's. Swapping one broker for another doesn't change the pattern.
 
 ## What people mean by "Event-Driven Architecture"
 
@@ -66,4 +66,4 @@ Ask yourself one question.
 - "Charge the customer." is a **command**, and usually points to orchestration.
 - "CustomerCharged." is an **event**, and usually points to choreography.
 
-That's the core distinction. RabbitMQ can carry both kinds of message. The pattern lives in your intent, not in the broker.
+That's the core distinction. Any broker can carry both kinds of message. The pattern lives in your intent, not in the tool.
