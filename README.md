@@ -50,25 +50,6 @@ InvoiceGenerated
 
 Other services subscribe and react on their own terms.
 
-## Choreography-style saga
-
-A saga is how you run a transaction that spans several services when you can't hold one big lock across all of them. Each service does its own local transaction and then announces what happened. The next service is listening, reacts, and announces its own result. No central coordinator, just events flowing.
-
-```mermaid
-flowchart TD
-    order["Order Service"] -->|OrderCreated| payment["Payment Service"]
-    payment -->|PaymentSucceeded| inventory["Inventory Service"]
-    inventory -->|StockReserved| shipping["Shipping Service"]
-    shipping -->|OrderShipped| order
-
-    payment -.->|PaymentFailed| order
-    inventory -.->|StockReservationFailed| payment
-```
-
-Solid arrows are the happy path. Dotted arrows are compensating reactions. When a step fails it announces that failure, and the earlier services undo what they already did, a refund, a released hold, a cancelled order. There's no single rollback across the whole thing, just each service cleaning up after itself when it hears bad news.
-
-The catch is that no service knows the full picture. The flow only lives in the chain of events, which is flexible but harder to follow when something goes wrong.
-
 ## Rule of thumb
 
 Ask yourself one question.
