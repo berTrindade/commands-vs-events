@@ -7,13 +7,9 @@ Think of the broker as the postal service. It doesn't decide what kind of commun
 ## Case 1 — sending a command (orchestration)
 
 ```mermaid
-C4Container
-    title Command (orchestration)
-    Container(order, "Order Service")
-    Container(queue, "Payment Queue", "Message broker")
-    Container(payment, "Payment Service")
-    Rel(order, queue, "Charge this customer")
-    Rel(queue, payment, "delivers the command")
+flowchart TD
+    order["Order Service"] -->|"Charge this customer"| queue["Payment Queue"]
+    queue -->|delivers the command| payment["Payment Service"]
 ```
 
 The Order Service is telling the Payment Service exactly what to do. That's a **command**.
@@ -21,15 +17,10 @@ The Order Service is telling the Payment Service exactly what to do. That's a **
 ## Case 2 — publishing an event (choreography)
 
 ```mermaid
-C4Container
-    title Event (choreography)
-    Container(order, "Order Service")
-    Container(broker, "Broker", "Message broker")
-    Container(inventory, "Inventory Service")
-    Container(email, "Email Service")
-    Rel(order, broker, "OrderCreated")
-    Rel(broker, inventory, "reacts")
-    Rel(broker, email, "reacts")
+flowchart TD
+    order["Order Service"] -->|OrderCreated| broker["Broker"]
+    broker -->|reacts| inventory["Inventory Service"]
+    broker -->|reacts| email["Email Service"]
 ```
 
 The Order Service isn't asking anyone to do anything. It's announcing that something happened. Any service interested in that event can react. That's **choreography**.
@@ -39,13 +30,9 @@ The Order Service isn't asking anyone to do anything. It's announcing that somet
 Out of the box a broker only gives you this:
 
 ```mermaid
-C4Container
-    title The broker on its own
-    Container(producer, "Producer")
-    Container(broker, "Broker", "Message broker")
-    Container(consumer, "Consumer")
-    Rel(producer, broker, "publishes a message")
-    Rel(broker, consumer, "delivers the message")
+flowchart LR
+    producer["Producer"] -->|publishes a message| broker["Broker"]
+    broker -->|delivers the message| consumer["Consumer"]
 ```
 
 It has no idea whether the message means "charge the customer", "OrderCreated", or "hello world". That meaning is your application's decision, not the broker's. Swapping one broker for another doesn't change the pattern.
